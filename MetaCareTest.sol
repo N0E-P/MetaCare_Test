@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.12;
 
-//Of course, all the data isn't private.
-//And for now, anybody can call the changeUserHeartRate function.
-//But it's an example contract to have an idea of how it could work.
+/* NOTES TO READ:
+Of course, all the data isn't private.
+And for now, anybody can call the changeUserHeartRate function.
+But it's an example contract to have an idea of how it could work.
+
+SignUp with your name / surname / doctor address (it can be any ETH address)
+Then, call any function, to see your data or to change it
+*/
 
 error MetaCare__YouAlreadyHaveCreatedAnAccount();
 error MetaCare__ThisAccountDoesNotExist();
@@ -51,7 +56,7 @@ contract MetaCareTest {
         //ADD AN IF STATEMENT HERE : Verify if the sender of this data is trusted
 
         //error if a database with this user address doesn't exist
-        if (userDataList[_userAddress].userAddress != msg.sender) {
+        if (userDataList[_userAddress].userAddress != _userAddress) {
             //it might be possible to simplify this if statement by just asking if userDataList[msg.sender] exists
             revert MetaCare__ThisAccountDoesNotExist();
         }
@@ -76,7 +81,7 @@ contract MetaCareTest {
     {
         //error if a database with this user address doesn't exist
 
-        if (userDataList[_userAddress].userAddress != msg.sender) {
+        if (userDataList[_userAddress].userAddress != _userAddress) {
             //it might be possible to simplify this if statement by just asking if userDataList[msg.sender] exists
             revert MetaCare__ThisAccountDoesNotExist();
         }
