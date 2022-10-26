@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.12;
 
-//Of course, all the data isn't private. But it's an example contract to have an idea of how it could work.
+//Of course, all the data isn't private.
+//And for now, anybody can call the changeUserHeartRate function.
+//But it's an example contract to have an idea of how it could work.
 
 error MetaCare__YouAlreadyHaveCreatedAnAccount();
 error MetaCare__ThisAccountDoesNotExist();
@@ -15,20 +17,11 @@ contract MetaCareTest {
         string name;
         address doctorAddress; //it's just an unique address for now, but we can replace it later by an array
         uint256 heartRate;
-        //We can add: age, weight, height, etc...
+        //We can add: age, weight, height and other health data later...
     }
 
     //create one structure of data for each user (we can find it using the user ETHaddress)
     mapping(address => userData) userDataList;
-
-    //error if a database with this user address doesn't exist
-    modifier existingUser(address _userAddress, address msg.sender) {
-        if (userDataList[_userAddress].userAddress != msg.sender) {
-            //it might be possible to simplify this if statement by just asking if userDataList[msg.sender] exists
-            revert MetaCare__ThisAccountDoesNotExist();
-        }
-        _;
-    }
 
     //add yourself in the smart contract data
     function signUp(
@@ -36,9 +29,13 @@ contract MetaCareTest {
         string memory _name,
         address _doctorAddress
     ) external {
+        if (userDataList[msg.sender].userAddress == msg.sender) {
+            //it might be possible to simplify this if statement by just asking if userDataList[msg.sender] exists
+            revert MetaCare__YouAlreadyHaveCreatedAnAccount();
+        }
+
         //add the user data in the mapping using the struct object
         userDataList[msg.sender] = userData(
-            numberOfContracts,
             msg.sender,
             _surname,
             _name,
@@ -48,10 +45,10 @@ contract MetaCareTest {
     }
 
     //function used by chainlink or the private data thing
-    function changeUserHeartRate(address _userAddress, uint256 _heartRate)
+    function changeUserHeartRateData(address _userAddress, uint256 _heartRate)
         external
     {
-        //Verify that the sender of this data is trusted
+        //ADD AN IF STATEMENT HERE : Verify if the sender of this data is trusted
 
         //error if a database with this user address doesn't exist
         if (userDataList[_userAddress].userAddress != msg.sender) {
@@ -63,25 +60,35 @@ contract MetaCareTest {
     }
 
     //The user can modify his doctor list at anytime
-    function changeMyDoctorList(address _userAddress, address _doctorAddress) existingUser external 
-         {
+    function changeMyDoctorList(address _doctorAddress) external {
+        //error if a database with this user address doesn't exist
+        if (userDataList[msg.sender].userAddress != msg.sender) {
+            //it might be possible to simplify this if statement by just asking if userDataList[msg.sender] exists
+            revert MetaCare__ThisAccountDoesNotExist();
+        }
         userDataList[msg.sender].doctorAddress = _doctorAddress;
     }
 
-    function getUserData(address _userAddress) existingUser
+    function getUserData(address _userAddress)
         external
         view
-        returns (Contract memory)
+        returns (userData memory)
     {
+        //error if a database with this user address doesn't exist
+
+        if (userDataList[_userAddress].userAddress != msg.sender) {
+            //it might be possible to simplify this if statement by just asking if userDataList[msg.sender] exists
+            revert MetaCare__ThisAccountDoesNotExist();
+        }
 
         //check if the user want to see his own data
         if (msg.sender == _userAddress) {
-            return userDataList[userAddress];
+            return userDataList[_userAddress];
         }
 
         //check if it's a doctor that want to get access to a patient data
         if (msg.sender == userDataList[_userAddress].doctorAddress) {
-            return userDataList[userAddress];
+            return userDataList[_userAddress];
         }
 
         //if the person calling the function isn't the data owner or a doctor, send him an error
