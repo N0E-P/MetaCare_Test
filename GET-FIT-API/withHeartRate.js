@@ -37,6 +37,7 @@ function getMetricsForDays(fromDaysAgo, toDaysAgo, tabName) {
     "aggregateBy": [
       {
         "dataTypeName": "com.google.heart_rate.bpm"
+        //, "dataSourceId": "derived:com.google.heart_rate.bpm:com.google.android.gms:heart_rate_bpm"
       },
     ],
     "bucketByTime": { "durationMillis": 86400000 },

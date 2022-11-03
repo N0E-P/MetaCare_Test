@@ -9,8 +9,6 @@ the real file is a .gs file. But I've convert it to .js for better readability (
 my cloud project link : https://console.cloud.google.com/apis/credentials/oauthclient/710666560092-6notetaf2opfsq2hefqjgl5hoj7sgfsi.apps.googleusercontent.com?project=metacare01
 
 
-# si marche, virer toutes les apps sur mon tel et les permissions google 
-
 
 
 # trouver équivalent pour heartrate :
@@ -29,4 +27,12 @@ my cloud project link : https://console.cloud.google.com/apis/credentials/oauthc
       }
 
 
+
 # les jours se mettent, mais pas l'heart rate
+quand il n'y a pas de sourceId
+
+        "dataSourceId": "derived:com.google.heart_rate.bpm:com.google.android.gms:heart_rate_bpm"
+
+        Donne : Exception: Request failed for https://www.googleapis.com returned code 403. Truncated server response: { "error": { "code": 403, "message": "datasource not found or not readable: derived:com.google.heart_rate.bpm:com.google.android.gms:hear... (use muteHttpExceptions option to examine full response)
+
+# finir tuto
