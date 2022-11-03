@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.12;
 
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 /* This is just an example contract to have an idea of how it could work.
 
 TO IMPROVE:
@@ -54,23 +57,28 @@ contract MetaCareDynamicNFT is ERC721Enumerable, Ownable {
 
     //add yourself to the user list by minting an NFT
     function mint(address _doctorAddress) public {
-        if (balanceOf(_owner) > 0) {
+        if (balanceOf(msg.sender) > 0) {
             revert YouAlreadyHaveAnNFT();
         }
 
         //Add the user in the struct and create the NFT
-        uint256 tokenId = totalSupply() + 1
-        userDataList[msg.sender] = userData{msg.sender, _doctorAddress, tokenId , 80};
+        uint256 tokenId = totalSupply() + 1;
+        userDataList[msg.sender] = userData(
+            msg.sender,
+            _doctorAddress,
+            tokenId,
+            80
+        );
         _safeMint(msg.sender, tokenId);
     }
-    
+
     //Give the possibility to change your doctor's address
     function changeMyDoctorAddress(address _newDoctorAddress) external {
         if (userDataList[msg.sender].userAddress != msg.sender) {
-           revert CreateYourNftBeforeCallingThisFunction();
+            revert CreateYourNftBeforeCallingThisFunction();
         }
-        
-        if(msg.sender != ownerOf(userDataList[msg.sender].tokenId)){
+
+        if (msg.sender != ownerOf(userDataList[msg.sender].tokenId)) {
             revert TheOwnerOfThisNftIsNotHisCreator();
         }
 
@@ -79,7 +87,7 @@ contract MetaCareDynamicNFT is ERC721Enumerable, Ownable {
     }
 
     //Enter your ETH address or the address of your patient
-    function getUserData(address _userAddress)  
+    function getUserData(address _userAddress)
         external
         view
         returns (userData memory)
@@ -88,7 +96,7 @@ contract MetaCareDynamicNFT is ERC721Enumerable, Ownable {
             revert ThisAccountDoesNotExist();
         }
 
-        if(_userAddress != ownerOf(userDataList[_userAddress].tokenId)){
+        if (_userAddress != ownerOf(userDataList[_userAddress].tokenId)) {
             revert TheOwnerOfThisNftIsNotHisCreator();
         }
 
@@ -109,12 +117,12 @@ contract MetaCareDynamicNFT is ERC721Enumerable, Ownable {
     //function used by chainlink to change the current heart Rate Data
     function changeUserHeartRateData(address _userAddress, uint256 _heartRate)
         external
-    {   
+    {
         if (userDataList[_userAddress].userAddress != _userAddress) {
             revert ThisAccountDoesNotExist();
         }
 
-        if(_userAddress != ownerOf(userDataList[_userAddress].tokenId)){
+        if (_userAddress != ownerOf(userDataList[_userAddress].tokenId)) {
             revert TheOwnerOfThisNftIsNotHisCreator();
         }
 
@@ -130,16 +138,19 @@ contract MetaCareDynamicNFT is ERC721Enumerable, Ownable {
         override
         returns (string memory)
     {
-        if(_exists(_tokenId) == false) {
+        if (_exists(_tokenId) == false) {
             revert ThisAccountDoesNotExist();
         }
 
+        //Get the heartRate of the owner of the tokenID
+        address userAddress = ownerOf(_tokenId);
+        uint256 currentHeartRate = userDataList[userAddress].heartRate;
+
         //Return the URI in function of the current heartRate
-        uint256 currentHeartRate = userDataList[_tokenId].heartRate;
-        if(currentHeartRate > 100){
-            return _highURI;
-        } else if (currentHeartRate < 60){
-            return _lowURI;
+        if (currentHeartRate > 100) {
+            return highURI;
+        } else if (currentHeartRate < 60) {
+            return lowURI;
         } else {
             return _baseURI();
         }
