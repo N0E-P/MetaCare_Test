@@ -4,8 +4,9 @@ we can get any other data from google fit if we want. [The list here](https://de
 
 the real file is a .gs file. But I've convert it to .js for better readability (as I've didn't find a .gs extension for vs code)
 
-my cloud project link : https://console.cloud.google.com/apis/credentials/oauthclient/710666560092-6notetaf2opfsq2hefqjgl5hoj7sgfsi.apps.googleusercontent.com?project=metacare01
+[use spreadsheets as database](https://www.youtube.com/watch?v=K6Vcfm7TA5U)
 
+Only work for one user (or have to do the OAuth) / test only
 
 # sources :
 première version du code
@@ -16,3 +17,8 @@ https://developers.google.com/fit/rest/v1/reference
 
 dataTypes :
 https://developers.google.com/fit/datatypes#using_data_types_with_the_rest_api
+
+my cloud project link : https://console.cloud.google.com/apis/credentials/oauthclient/710666560092-6notetaf2opfsq2hefqjgl5hoj7sgfsi.apps.googleusercontent.com?project=metacare01
+
+
+# comment ajouter d'autres valeurs à prendre ?

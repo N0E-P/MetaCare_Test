@@ -4,25 +4,21 @@ var ClientSecret = '';
 
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
-  ui.createMenu('Google Fit')
-      .addItem('Authorize if needed (does nothing if already authorized)', 'showSidebar')
-      .addItem('Get Metrics for Yesterday', 'getMetrics')
-      .addItem('Get Metrics for past 60 days', 'getHistory')
-      .addItem('Reset Settings', 'clearProps')
+  ui.createMenu('MetaCare')
+      .addItem('Authorize', 'showSidebar')
+      .addItem('Get Data from Yesterday', 'getMetrics')
+      .addItem('Reset', 'clearProps')
       .addToUi();
 }
 
+//Get data just from yesterday
 function getMetrics() {
-  getMetricsForDays(1, 1, 'Metrics');
+  getMetricsForDays(1, 1, 'Data');
 }
 
-function getHistory() {
-  getMetricsForDays(1, 60, 'History');
-}
-
-// see step count example at https://developers.google.com/fit/scenarios/read-daily-step-total
-// adapted below to handle multiple metrics (steps, weight, distance), only logged if present for day
+//Get data in function of any day. And can write on any tab
 function getMetricsForDays(fromDaysAgo, toDaysAgo, tabName) {
+  //Time management
   var start = new Date();
   start.setHours(0,0,0,0);
   start.setDate(start.getDate() - toDaysAgo);
@@ -33,14 +29,14 @@ function getMetricsForDays(fromDaysAgo, toDaysAgo, tabName) {
   
   var fitService = getFitService();
   
+  //Ask for the data to pull
   var request = {
     "aggregateBy": [
       {
         "dataTypeName": "com.google.heart_rate.bpm"
-        //, "dataSourceId": "derived:com.google.heart_rate.bpm:com.google.android.gms:heart_rate_bpm"
       },
     ],
-    "bucketByTime": { "durationMillis": 60000 }, // 24H : 86400000
+    "bucketByTime": { "durationMillis": 60000 }, // will look at the data for each minutes
     "startTimeMillis": start.getTime(),
     "endTimeMillis": end.getTime()
   };
@@ -54,22 +50,12 @@ function getMetricsForDays(fromDaysAgo, toDaysAgo, tabName) {
     'payload' : JSON.stringify(request, null, 2)
   });
   
-  /*version qui met une erreur si pas de valeur tel jour
-  var json = JSON.parse(response.getContentText());
-  var heartRate = json.bucket[0].dataset[0].point[0].value[0].intVal;
-  
-  
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(tabName);
-  sheet.appendRow([start, heartRate]);
-*/
-
   var json = JSON.parse(response.getContentText());
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(tabName);
   
+  // This loop will write all the data it find on the google sheet
   for(var b = 0; b < json.bucket.length; b++) {
-    // each bucket in our response should be a day
     var bucketDate = new Date(parseInt(json.bucket[b].startTimeMillis, 10));
     
     var heartRate = -1;
@@ -84,7 +70,6 @@ function getMetricsForDays(fromDaysAgo, toDaysAgo, tabName) {
 }
 
 // functions below adapted from Google OAuth example at https://github.com/googlesamples/apps-script-oauth2
-
 function getFitService() {
   // Create a new service with the given name. The name will be used when
   // persisting the authorized token, so ensure it is unique within the
@@ -124,12 +109,13 @@ function getFitService() {
       //.setParam('approval_prompt', 'force');
 }
 
+//Create the sidebar at the right of the google sheet when we press the 'Authorize' Button
 function showSidebar() {
   var fitService = getFitService();
   if (!fitService.hasAccess()) {
     var authorizationUrl = fitService.getAuthorizationUrl();
     var template = HtmlService.createTemplate(
-        '<a href="<?= authorizationUrl ?>" target="_blank">Authorize</a>. ' +
+        '<a href="<?= authorizationUrl ?>" target="_blank">Authorize</a> ' +
         'Close this after you have finished.');
     template.authorizationUrl = authorizationUrl;
     var page = template.evaluate();
@@ -139,6 +125,7 @@ function showSidebar() {
   }
 }
 
+//Create the page at the end of the Authorization process
 function authCallback(request) {
   var fitService = getFitService();
   var isAuthorized = fitService.handleCallback(request);
@@ -149,6 +136,7 @@ function authCallback(request) {
   }
 }
 
+// Reset function. After using it, we just have to do click the Authorize button again
 function clearProps() {
   PropertiesService.getUserProperties().deleteAllProperties();
 }
