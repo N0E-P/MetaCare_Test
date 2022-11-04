@@ -2,22 +2,14 @@
 
 
 
-# sources :
-première version du code
-https://github.com/abfo/google-fit-to-sheets/blob/07bc7723676e36a3a017911a5c830ae9a452a65c/Code.gs
-
-dataSourceId :
-https://developers.google.com/fit/rest/v1/reference
-
-dataTypes :
-https://developers.google.com/fit/datatypes#using_data_types_with_the_rest_api
-
-
-
 # les jours se mettent, mais pas l'heart rate
 quand il n'y a pas de sourceId
 https://stackoverflow.com/questions/64802370/how-to-get-weekly-google-fit-rest-api-data
 
+
+# accéder au résumé journalier. pour avoir qu'une seule valeur
+
+https://stackoverflow.com/questions/46425694/how-to-get-heart-rate-values-from-google-fit-history
 
 
 # quand il y a sourceID
@@ -38,7 +30,14 @@ Donne : Exception: Request failed for https://www.googleapis.com returned code 4
 "dataSourceId": "derived:com.google.distance.delta:com.google.android.gms:merge_distance_delta"
 }
 
+:com.google.android.gms:heart_rate_bpm
+
 
 
 # finir tuto
 https://ithoughthecamewithyou.com/post/export-google-fit-daily-steps-to-a-google-sheet
+
+
+
+
+# plusieurs valeurs d'heartrate pendant la journée

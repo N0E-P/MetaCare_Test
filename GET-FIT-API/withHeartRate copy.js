@@ -39,8 +39,12 @@ function getMetricsForDays(fromDaysAgo, toDaysAgo, tabName) {
         "dataTypeName": "com.google.heart_rate.bpm"
         //, "dataSourceId": "derived:com.google.heart_rate.bpm:com.google.android.gms:heart_rate_bpm"
       },
+      {
+        "dataTypeName": "com.google.aggregate.heart_rate.summary"
+        //, "dataSourceId": "derived:com.google.heart_rate.bpm:com.google.android.gms:heart_rate_bpm"
+      },
     ],
-    "bucketByTime": { "durationMillis": 60000 }, // 24H : 86400000
+    "bucketByTime": { "durationMillis": 86400000 }, // 24H : 86400000 / par minutes : 60000
     "startTimeMillis": start.getTime(),
     "endTimeMillis": end.getTime()
   };
