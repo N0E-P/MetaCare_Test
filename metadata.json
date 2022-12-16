@@ -1,0 +1,5 @@
+'{
+    "name": ', heartRateLevel, ' Heart Rate",
+    "description": "The patient resting heart rate is', heartRateLevel, '. This is not an official medical diagnosis and your heart rate should be monitored by a certified instrument. Please consult your doctor if you feel any chest pain.",
+    "attributes": [{ "trait-type": "Heart Rate","value": "' , heartRateLevel, '"}], 
+    "image":"data:image/svg+xml;base64,', Base64.encode(bytes(abi.encodePacked(svgFirstPart, heartRateLevel, svgLastPart))) , '"}'
