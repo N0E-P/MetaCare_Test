@@ -1,0 +1,4 @@
+blue : #2370b9
+orange : #f78517
+red : #da0b4a
+
